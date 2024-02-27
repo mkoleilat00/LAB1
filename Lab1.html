@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html lang="en">
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>To-Do List</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
   <style>
     *{
       margin: 0;
@@ -21,7 +21,7 @@
       background: linear-gradient(135deg, #FFFF00, darkorange);
     }
     .to-do-file{
-      width: 200%;
+      width: 300%;
       max-width: 860px;
       background: navajowhite;
       margin: 150px auto 50px;
@@ -29,14 +29,16 @@
       border-radius: 10px;
 
       h2{
-        color: red;
+        color: black;
         display: flex;
         align-items: center;
         margin-bottom: 20px;
+        padding-left: 34%;
       }
       img {
-        width: 30px;
+        width: 50px;
         margin-left: 10px;
+
       }
       button {
         border: none;
@@ -45,7 +47,7 @@
         font-size: 16px;
         cursor: pointer;
         border-radius: 45px;
-        color: orangered;
+        color: black;
         right:0;
       }
       .box{
@@ -55,6 +57,9 @@
         justify-content: space-between;
         padding-left: 30px;
         border-radius: 40px;
+      }
+      ul {
+        padding-left: 0;
       }
       ul li{
         list-style: none;
@@ -88,13 +93,23 @@
         width: 40px;
         height: 40px;
         font-size: 22px;
-        color: hotpink;
+        color: black;
         line-height: 40px;
         text-align: center;
         border-radius: 50%;
       }
       ul li span:hover{
-        background: #555555;
+        background: dimgrey;
+      }
+
+      .dueDateInput {
+        margin-left: 15px;
+        border-radius: 40px;
+
+      }
+      .subtask {
+        margin-left: 15px;
+        border-radius: 40px;
       }
 
     }
@@ -111,12 +126,11 @@
       <input type="text" id="inputBox" placeholder="What do you want to do?">
       <select id="colorSelect">
         <option value="red">Red</option>
-        <option value="blue">Blue</option>
+        <option value="Yellow">Yellow</option>
         <option value="white">White</option>
       </select>
       <button onclick="deleteAllTasks()">Select All & Delete</button>
       <button onclick="addTask()">Add</button>
-      <button onclick="addDueDate()">Add Due Date</button>
     </div>
     <ul id="tasks">
     </ul>
@@ -142,13 +156,23 @@
       const li = document.createElement("li");
       li.textContent = inputBox.value;
       li.style.backgroundColor = colorSelect.value;
+
       const dueDateInput = document.createElement("input");
       dueDateInput.type = "date";
+      dueDateInput.classList.add("dueDateInput");
       li.appendChild(dueDateInput);
-      tasks.appendChild(li);
+
       const span = document.createElement("span");
       span.textContent = "\u00d7";
       li.appendChild(span);
+
+      const subtaskInput = document.createElement("input");
+      subtaskInput.type = "text";
+      subtaskInput.placeholder = "Add subtask";
+      subtaskInput.classList.add("subtask");
+      li.appendChild(subtaskInput);
+
+      tasks.appendChild(li);
       inputBox.value = "";
       saveData();
       playSound(addSound);
@@ -174,20 +198,17 @@
     }
   }, false);
 
-  function addDueDate() {
-    const li = document.createElement("li");
-    const dueDateInput = document.createElement("input");
-    dueDateInput.type = "date";
-    li.appendChild(dueDateInput);
-    tasks.appendChild(li);
-  }
-
   function saveData() {
     const taskItems = [];
     tasks.querySelectorAll("li").forEach(item => {
+      const subtasks = [];
+      item.querySelectorAll(".subtask").forEach(subtask => {
+        subtasks.push(subtask.value);
+      });
       taskItems.push({
-        text: item.style.right,
-        dueDate: item.querySelector("input[type='date']").value
+        text: item.textContent,
+        dueDate: item.querySelector(".dueDateInput").value,
+        subtasks: subtasks
       });
     });
     localStorage.setItem("tasks", JSON.stringify(taskItems));
@@ -198,14 +219,27 @@
     savedTasks.forEach(task => {
       const li = document.createElement("li");
       li.textContent = task.text;
-      li.style.backgroundColor = task.color;
+      li.style.backgroundColor = colorSelect.value;
+
       const dueDateInput = document.createElement("input");
       dueDateInput.type = "date";
       dueDateInput.value = task.dueDate;
+      dueDateInput.classList.add("dueDateInput");
       li.appendChild(dueDateInput);
+
       const span = document.createElement("span");
       span.textContent = "\u00d7";
       li.appendChild(span);
+
+      task.subtasks.forEach(subtaskText => {
+        const subtaskInput = document.createElement("input");
+        subtaskInput.type = "text";
+        subtaskInput.value = subtaskText;
+        subtaskInput.placeholder = "Add subtask";
+        subtaskInput.classList.add("subtask");
+        li.appendChild(subtaskInput);
+      });
+
       tasks.appendChild(li);
     });
   }

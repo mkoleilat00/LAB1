@@ -118,6 +118,7 @@
 <body>
 <audio id="addSound" src="sounds/click.mp3"></audio>
 <audio id="deleteSound" src="sounds/delete.mp3"></audio>
+<audio id="checkedSound" src="sounds/wohoo.mp3"></audio>
 
 <div class="container">
   <div class="to-do-file">
@@ -143,6 +144,7 @@
   const tasks = document.getElementById("tasks");
   const addSound = document.getElementById("addSound");
   const deleteSound = document.getElementById("deleteSound");
+  const checkedSound = document.getElementById("checkedSound")
 
   function playSound(sound) {
     sound.currentTime = 0;
@@ -190,6 +192,7 @@
   tasks.addEventListener("click", function (e) {
     if (e.target.tagName === "LI") {
       e.target.classList.toggle("checked");
+      playSound(checkedSound);
       saveData();
     } else if (e.target.tagName === "SPAN") {
       e.target.parentElement.remove();
